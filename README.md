@@ -5,6 +5,7 @@
 Transform your vintage black & white photos into vibrant color masterpieces with the power of Deep Learning!
 
 🚀 **Check out the live version of Photo Colorizer** 🚀
+
 [![Live Application](https://img.shields.io/badge/Live%20Application-Click%20Here-brightgreen)](https://vintagecolorizer.streamlit.app/)
 
 ## 📸 Overview
