@@ -1,17 +1,10 @@
 import os
+import cv2
 import numpy as np
 import urllib.request
 import streamlit as st
 from datetime import datetime
 from PIL import Image
-import streamlit.components.v1 as components
-
-# Try importing OpenCV - if not available, inform the user
-try:
-    import cv2
-    CV2_AVAILABLE = True
-except ImportError:
-    CV2_AVAILABLE = False
 
 # -------------------- UI Customization --------------------
 def add_custom_css():
@@ -65,20 +58,6 @@ def add_custom_css():
         .footer {
             text-align: center; margin-top: 50px; padding: 20px;
             color: #888888; font-size: 14px;
-        }
-        .error-container {
-            background-color: #fff3f3; 
-            border-left: 5px solid #FF5F6D; 
-            padding: 20px; 
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-        .install-instructions {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: monospace;
-            margin-top: 10px;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -134,9 +113,6 @@ def add_bg_from_url():
 # -------------------- Model Loading --------------------
 @st.cache_resource
 def load_model():
-    if not CV2_AVAILABLE:
-        return None
-        
     MODEL_DIR = "colorize_model"
     os.makedirs(MODEL_DIR, exist_ok=True)
 
@@ -170,9 +146,6 @@ def download_file(url, dest):
 
 # -------------------- Image Colorization --------------------
 def colorize_image(image, model):
-    if not CV2_AVAILABLE or model is None:
-        return None, None
-        
     image = np.array(image.convert("RGB"))
     image_bw = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     image_bw_3channel = cv2.cvtColor(image_bw, cv2.COLOR_GRAY2RGB)
@@ -197,75 +170,48 @@ def colorize_image(image, model):
     return image_bw_3channel, colorized
 
 # -------------------- Streamlit Page Setup --------------------
-def main():
-    st.set_page_config(
-        page_title="Magical Image Colorizer",
-        page_icon="✨",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
+st.set_page_config(
+    page_title="Magical Image Colorizer",
+    page_icon="✨",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-    add_custom_css()
-    add_bg_from_url()
-    render_header()
+add_custom_css()
+add_bg_from_url()
+render_header()
 
-    # Sidebar Info
-    st.sidebar.markdown("""
-    <div style="background: linear-gradient(45deg, rgba(255,95,109,0.8), rgba(255,195,113,0.8));
-    padding: 20px; border-radius: 15px; color: white; margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(255,95,109,0.3);">
-        <h2 style="text-align: center;">✨ Magic Colorizer</h2>
-        <p style="text-align: center;">Bring your memories to life!</p>
-    </div>
-    """, unsafe_allow_html=True)
+# Sidebar Info
+st.sidebar.markdown("""
+<div style="background: linear-gradient(45deg, rgba(255,95,109,0.8), rgba(255,195,113,0.8));
+padding: 20px; border-radius: 15px; color: white; margin-bottom: 20px;
+box-shadow: 0 4px 15px rgba(255,95,109,0.3);">
+    <h2 style="text-align: center;">✨ Magic Colorizer</h2>
+    <p style="text-align: center;">Bring your memories to life!</p>
+</div>
+""", unsafe_allow_html=True)
 
-    st.sidebar.markdown("""
-    <div style="background-color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
-        <h3 style="color: #FF5F6D;">How It Works</h3>
-        <p style="color: green">This app uses deep learning to colorize black & white images using a CNN trained on over a million photos.</p>
-    </div>
-    """, unsafe_allow_html=True)
+st.sidebar.markdown("""
+<div style="background-color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+    <h3 style="color: #FF5F6D;">How It Works</h3>
+    <p style="color: green">This app uses deep learning to colorize black & white images using a CNN trained on over a million photos.</p>
+</div>
+""", unsafe_allow_html=True)
 
-    # Check if OpenCV is available
-    if not CV2_AVAILABLE:
-        st.markdown("""
-        <div class="error-container">
-            <h3>⚠️ OpenCV Not Found</h3>
-            <p>The OpenCV (cv2) library is required to run this application but it's not installed in your environment.</p>
-            <p>To fix this issue, install OpenCV by adding it to your requirements.txt file or running:</p>
-            <div class="install-instructions">pip install opencv-python-headless</div>
-            <p>For Streamlit Cloud deployment, make sure to include this in your requirements.txt file:</p>
-            <div class="install-instructions">opencv-python-headless==4.5.5.64</div>
-            <p>Note: The headless version is recommended for cloud deployments.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Display example images
-        st.markdown(gradient_text("Example Colorized Images"), unsafe_allow_html=True)
-        example_col1, example_col2 = st.columns(2)
-        with example_col1:
-            st.image("https://i.imgur.com/lZVPBn8.jpg", caption="Original B&W Example", use_column_width=True)
-        with example_col2:
-            st.image("https://i.imgur.com/RxnF3AM.jpg", caption="Colorized Example", use_column_width=True)
-            
-    else:
-        # Upload and process image
-        file = render_file_uploader()
-        model = load_model()
+# Upload and process image
+file = render_file_uploader()
+model = load_model()
 
-        if file:
-            image = Image.open(file)
-            st.markdown("### Original and Colorized Results")
-            with st.spinner("Colorizing your image... ✨"):
-                bw_img, colorized_img = colorize_image(image, model)
+if file:
+    image = Image.open(file)
+    st.markdown("### Original and Colorized Results")
+    with st.spinner("Colorizing your image... ✨"):
+        bw_img, colorized_img = colorize_image(image, model)
 
-            col1, col2 = st.columns(2)
-            with col1:
-                st.image(bw_img, caption="Original B&W", use_column_width=True)
-            with col2:
-                st.image(colorized_img, caption="Colorized", use_column_width=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.image(bw_img, caption="Original B&W", use_column_width=True)
+    with col2:
+        st.image(colorized_img, caption="Colorized", use_column_width=True)
 
-    add_footer()
-
-if __name__ == "__main__":
-    main()
+add_footer()
