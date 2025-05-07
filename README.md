@@ -4,7 +4,8 @@
 
 Transform your vintage black & white photos into vibrant color masterpieces with the power of Deep Learning!
 
-🚀 **Live Demo**: [Try it now!](https://vintagecolorizer.streamlit.app/)
+🚀 **Check out the live version of Photo Colorizer** 🚀
+[![Live Application](https://img.shields.io/badge/Live%20Application-Click%20Here-brightgreen)](https://vintagecolorizer.streamlit.app/)
 
 ## 📸 Overview
 
@@ -72,10 +73,6 @@ The app is live and hosted at:
 
 - [Richard Zhang](https://github.com/richzhang/colorization) for the original colorization model
 - [Streamlit](https://streamlit.io/) for the UI framework
-
-## 📜 License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ---
 
