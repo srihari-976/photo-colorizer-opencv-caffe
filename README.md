@@ -1,4 +1,4 @@
-# photo-colorizer-opencv-caffe
+# Photo Colorizer Opencv+Caffe
 
 ## ✨ Magical Image Colorizer ✨
 
